@@ -5,7 +5,7 @@ import { Obfuscate } from '@south-paw/react-obfuscate-ts';
 
 import { DrawGrid, PlanGrid } from "./grids";
 import { Menu } from "./Menu";
-import { SquareType, WallType, GridMode, styledButton } from "./helpers";
+import { SquareType, GridMode, styledButton } from "./helpers";
 import { Layout } from "./Layout";
 
 import LZUTF8 from 'lzutf8';
@@ -91,9 +91,10 @@ export default function Workspace(props: WorkspaceProps) {
     setDraggedPosition(undefined);
   }
 
-  // downloads the Layout object properties as a JSON file
+  // encodes, stringifies, and compresses `layout` into JSON
+  // attaches it to the URL and copies to clipboard
   const handleExportLayout = () => {
-    const layoutStringUncompressed = JSON.stringify(layout);
+    const layoutStringUncompressed = JSON.stringify(layout.encode());
     const layoutStringCompressed = LZUTF8.compress(layoutStringUncompressed, {
       outputEncoding: 'Base64',
     });
@@ -103,23 +104,9 @@ export default function Workspace(props: WorkspaceProps) {
     navigator.clipboard.writeText(layoutURI).then();
   };
 
-  // converts a JSON string to a Layout object if possible
-  // setting prototype is not recursive, must be set manually
-  const handleImportLayout = useCallback((layoutJson: string) => {
-    const layoutObject = JSON.parse(layoutJson);
-    Object.setPrototypeOf(layoutObject, Layout.prototype);
-    for (const row of layoutObject.layout) {
-      for (const layoutComponent of row) {
-        // only wall types have a className on them
-        const objectType = !!layoutComponent?.className ? WallType : SquareType;
-        Object.setPrototypeOf(layoutComponent, objectType.prototype);
-      }
-    }
-
-    for (const element of layoutObject.elements) {
-      Object.setPrototypeOf(element, SquareType.prototype);
-    }
-
+  // TODO: error handling
+  const handleImportLayout = useCallback((layoutJsonString: string) => {
+    const layoutObject = Layout.decode(layoutJsonString);
     props.setWidth(layoutObject.width);
     props.setHeight(layoutObject.height);
     setLayout(layoutObject);
