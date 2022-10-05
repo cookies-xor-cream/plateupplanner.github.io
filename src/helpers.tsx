@@ -244,22 +244,9 @@ export class SquareType {
   }
 
   static getAllAppliances() {
-    let allAppliances = [];
-    for (let i = 0; i < this.appliances.length; i++) {
-      allAppliances.push(
-        new SquareType(this.appliances[i][0], this.appliances[i][1], i)
-      );
-    }
-    for (let j = 0; j < this.ingredients.length; j++) {
-      allAppliances.push(
-        new SquareType(
-          this.ingredients[j][0],
-          this.ingredients[j][1],
-          j + this.appliances.length
-        )
-      );
-    }
-    return allAppliances;
+    return ([...this.appliances, ...this.ingredients]).map(([imagePath, imageAlt], i) => {
+      return new SquareType(imagePath, imageAlt, i)
+    });
   }
 }
 
