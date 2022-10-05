@@ -93,16 +93,9 @@ export default function Workspace(props: WorkspaceProps) {
   // downloads the Layout object properties as a JSON file
   const handleExportLayout = () => {
     const layoutString = JSON.stringify(layout);
-    const encodingMetadata = 'data:text/json;charset=utf-8';
-    const layoutURI = encodeURI(`${encodingMetadata},${layoutString}`);
-
-    const link = document.createElement('a');
-    link.setAttribute('href', layoutURI);
-    link.setAttribute('download', 'layout.json');
-
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    const baseUrl = `${window.location.origin}${window.location.pathname}`
+    const layoutURI = encodeURI(`${baseUrl}#${layoutString}`);
+    // TODO: use layoutURI
   };
 
   // converts a JSON string to a Layout object if possible
@@ -129,7 +122,8 @@ export default function Workspace(props: WorkspaceProps) {
 
   useEffect(() => {
     if (!!props.locationFragment) {
-      handleImportLayout(props.locationFragment);
+      const layoutJson = decodeURI(props.locationFragment).slice(1);
+      handleImportLayout(layoutJson);
     }
   }, []);
 
