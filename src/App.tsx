@@ -35,6 +35,8 @@ function App() {
   }
 
   const handleReset = () => {
+    setHeight(12);
+    setWidth(16);
     setShowWorkspace(false);
   }
 
