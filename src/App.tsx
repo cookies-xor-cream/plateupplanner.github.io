@@ -10,8 +10,12 @@ import 'antd/dist/antd.min.css'
 import { styledButton } from "./helpers";
 
 function App() {
-  const [height, setHeight] = useState<number>(12);
-  const [width, setWidth] = useState<number>(16);
+  const maxHeight = 12;
+  const maxWidth = 16;
+  const defaultHeight = maxHeight;
+  const defaultWidth = maxWidth;
+  const [height, setHeight] = useState<number>(defaultHeight);
+  const [width, setWidth] = useState<number>(defaultWidth);
   const [showWorkspace, setShowWorkspace] = useState(false);
   const [importLayoutString, setImportLayoutString] = useState('')
 
@@ -27,16 +31,16 @@ function App() {
         width !== undefined &&
         height > 0 &&
         width > 0 &&
-        height <= 12 &&
-        width <= 16) {
+        height <= maxHeight &&
+        width <= maxWidth) {
       setImportLayoutString('');
       setShowWorkspace(true);
     }
   }
 
   const handleReset = () => {
-    setHeight(12);
-    setWidth(16);
+    setHeight(defaultHeight);
+    setWidth(defaultWidth);
     setShowWorkspace(false);
   }
 
@@ -113,9 +117,9 @@ function App() {
             justifyContent: "center",
             alignItems: "center"
           }}>
-            <InputNumber 
-              min={1} max={12} defaultValue={12} 
-              onChange={(value: SetStateAction<number>) => setHeight(value)} 
+            <InputNumber
+              min={1} max={maxHeight} defaultValue={defaultHeight}
+              onChange={(value: SetStateAction<number>) => setHeight(value)}
               style={{
                 fontSize: "2em",
                 padding: "5%"
@@ -129,8 +133,8 @@ function App() {
             justifyContent: "center",
             alignItems: "center"
           }}>
-            <InputNumber 
-              min={1} max={16} defaultValue={16} 
+            <InputNumber
+              min={1} max={maxWidth} defaultValue={defaultWidth}
               onChange={(value: SetStateAction<number>) => setWidth(value)}
               style={{
                 fontSize: "2em",
