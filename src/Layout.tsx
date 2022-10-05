@@ -34,6 +34,35 @@ export class Layout {
     this.layout = layout;
   }
 
+  encode() {
+    const layoutElements = this.elements.map((element) => element.order);
+    const layoutLayout = this.layout.map((layoutRow) => {
+      return layoutRow.map((layoutComponent) => {
+        if ('order' in layoutComponent) {
+          return [
+            layoutComponent.order,
+            layoutComponent.rotation,
+          ];
+        } else {
+          return [
+            layoutComponent.className,
+          ]
+        }
+      })
+    })
+
+    return {
+      height: this.height,
+      width: this.width,
+      layout: layoutLayout,
+      elements: layoutElements,
+    };
+  }
+
+  static decode() {
+
+  }
+
   setElement(i: number, j: number, element: WallType | SquareType) {
     if (i % 2 === 0 && j % 2 === 0 && element instanceof WallType) {
       throw new TypeError("Cannot set a wall type on a square");
