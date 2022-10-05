@@ -1,5 +1,14 @@
 import { SquareType, WallType } from "./helpers";
 
+type EncodedSquareType = [number, number]; // [order, rotation]
+type EncodedWallType = [string]; // [className]
+type EncodedLayout = {
+  height: number;
+  width: number;
+  layout: Array<Array<EncodedSquareType | EncodedWallType>>;
+  elements: Array<EncodedSquareType>;
+}
+
 export class Layout {
   readonly width: number;
   readonly height: number;
@@ -35,31 +44,37 @@ export class Layout {
   }
 
   encode() {
-    const layoutElements = this.elements.map((element) => element.order);
+    const layoutElements = this.elements.map((element) => ([
+      element.order,
+      element.rotation,
+    ] as EncodedSquareType));
+
     const layoutLayout = this.layout.map((layoutRow) => {
       return layoutRow.map((layoutComponent) => {
         if ('order' in layoutComponent) {
           return [
             layoutComponent.order,
             layoutComponent.rotation,
-          ];
+          ] as EncodedSquareType;
         } else {
           return [
             layoutComponent.className,
-          ]
+          ] as EncodedWallType;
         }
       })
     })
 
-    return {
+    const encodedLayout: EncodedLayout = {
       height: this.height,
       width: this.width,
       layout: layoutLayout,
       elements: layoutElements,
     };
+
+    return encodedLayout;
   }
 
-  static decode() {
+  static decode(layoutJson: EncodedLayout) {
 
   }
 
