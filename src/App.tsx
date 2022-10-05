@@ -1,4 +1,4 @@
-import { useState, KeyboardEvent, SetStateAction } from "react";
+import { useState, KeyboardEvent, SetStateAction, useEffect } from "react";
 import { InputNumber } from "antd";
 import { WarningOutlined } from "@ant-design/icons";
 
@@ -13,6 +13,12 @@ function App() {
   const [height, setHeight] = useState<number>(12);
   const [width, setWidth] = useState<number>(16);
   const [showWorkspace, setShowWorkspace] = useState(false);
+
+  useEffect(() => {
+    if (window.location.hash) {
+      setShowWorkspace(true);
+    }
+  }, []);
 
   const handleSubmit = () => {
     if (height !== undefined &&
@@ -69,6 +75,7 @@ function App() {
           setWidth={setWidth}
           setHeight={setHeight}
           handleResetParent={handleReset}
+          locationFragment={window.location.hash}
         />
       </div>
     )

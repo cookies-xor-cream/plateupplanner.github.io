@@ -12,6 +12,7 @@ import "./Workspace.css";
 export interface WorkspaceProps {
   height: number;
   width: number;
+  locationFragment: string;
   setWidth: (width: number) => void;
   setHeight: (height: number) => void;
   handleResetParent: () => void;
@@ -242,20 +243,20 @@ export default function Workspace(props: WorkspaceProps) {
         )}
         {drawButton}
         {styledButton(
-              "Export layout",
-              handleExportLayout,
-              <SaveOutlined />,
-              false,
-              false
-            )}
-            {styledButton(
-              "Import layout",
-              handleImportLayout,
-              <CloudUploadOutlined />,
-              false,
-              false
-            )}
-            <input ref={fileUploadRef} onChange={handleLayoutUpload} type='file' hidden />
+          "Export layout",
+          handleExportLayout,
+          <SaveOutlined />,
+          false,
+          false
+        )}
+        {styledButton(
+          "Import layout",
+          handleImportLayout,
+          <CloudUploadOutlined />,
+          false,
+          false
+        )}
+        <input ref={fileUploadRef} onChange={handleLayoutUpload} type='file' hidden />
       </div>
       <Modal
         title="Discard current floorplan?"
