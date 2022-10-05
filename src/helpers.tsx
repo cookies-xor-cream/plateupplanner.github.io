@@ -27,6 +27,19 @@ export class WallType {
     return this.className;
   }
 
+  // TODO: error handling;
+  // TODO: use in encoding
+  static fromOrder(order: number) {
+    return [WallType.Empty, WallType.Wall, WallType.Half][order];
+  }
+
+  // TODO: error handling
+  static toOrder(wall: WallType) {
+    return ([
+      WallType.Empty, WallType.Wall, WallType.Half
+    ]).indexOf(wall);
+  }
+
   cycle() {
     if (this.className === "line-empty") {
       return WallType.Wall;

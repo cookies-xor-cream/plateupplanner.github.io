@@ -1,12 +1,11 @@
 import { SquareType, WallType } from "./helpers";
 
 type EncodedSquareType = [number, number]; // [order, rotation]
-type EncodedWallType = [string]; // [className]
+type EncodedWallType = [number]; // [className]
 type EncodedLayout = {
   height: number;
   width: number;
   layout: Array<Array<EncodedSquareType | EncodedWallType>>;
-  elements: Array<EncodedSquareType>;
 }
 
 export class Layout {
@@ -44,11 +43,6 @@ export class Layout {
   }
 
   encode() {
-    const layoutElements = this.elements.map((element) => ([
-      element.order,
-      element.rotation,
-    ] as EncodedSquareType));
-
     const layoutLayout = this.layout.map((layoutRow) => {
       return layoutRow.map((layoutComponent) => {
         if ('order' in layoutComponent) {
@@ -58,7 +52,7 @@ export class Layout {
           ] as EncodedSquareType;
         } else {
           return [
-            layoutComponent.className,
+            WallType.toOrder(layoutComponent),
           ] as EncodedWallType;
         }
       })
@@ -68,7 +62,6 @@ export class Layout {
       height: this.height,
       width: this.width,
       layout: layoutLayout,
-      elements: layoutElements,
     };
 
     return encodedLayout;
@@ -91,8 +84,7 @@ export class Layout {
           const element = new SquareType(imagePath, imageAlt, order, rotation);
           layout.setElement(i, j, element);
         } else {
-          const wallElement = new WallType(encodedElement[0]);
-          layout.setElement(i, j, wallElement);
+          layout.setElement(i, j, WallType.fromOrder(encodedElement[0]));
         }
       });
     })
