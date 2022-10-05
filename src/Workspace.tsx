@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Modal, Popover } from "antd";
-import { CloudUploadOutlined, DoubleLeftOutlined, QuestionCircleOutlined, SaveOutlined } from "@ant-design/icons";
+import { DoubleLeftOutlined, QuestionCircleOutlined, SaveOutlined } from "@ant-design/icons";
 import { Obfuscate } from '@south-paw/react-obfuscate-ts';
 
 import { DrawGrid, PlanGrid } from "./grids";
@@ -19,7 +19,6 @@ export interface WorkspaceProps {
 }
 
 export default function Workspace(props: WorkspaceProps) {
-  const fileUploadRef = useRef<HTMLInputElement>(null);
   const [layout, setLayout] = useState(new Layout(props.height, props.width));
   const [mode, setMode] = useState(GridMode.Plan);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -95,12 +94,12 @@ export default function Workspace(props: WorkspaceProps) {
     const layoutString = JSON.stringify(layout);
     const baseUrl = `${window.location.origin}${window.location.pathname}`
     const layoutURI = encodeURI(`${baseUrl}#${layoutString}`);
-    // TODO: use layoutURI
+    navigator.clipboard.writeText(layoutURI).then();
   };
 
   // converts a JSON string to a Layout object if possible
   // setting prototype is not recursive, must be set manually
-  const handleImportLayout = (layoutJson: string) => {
+  const handleImportLayout = useCallback((layoutJson: string) => {
     const layoutObject = JSON.parse(layoutJson);
     Object.setPrototypeOf(layoutObject, Layout.prototype);
     for (const row of layoutObject.layout) {
@@ -118,14 +117,14 @@ export default function Workspace(props: WorkspaceProps) {
     props.setWidth(layoutObject.width);
     props.setHeight(layoutObject.height);
     setLayout(layoutObject);
-  }
+  }, [props])
 
   useEffect(() => {
     if (!!props.locationFragment) {
       const layoutJson = decodeURI(props.locationFragment).slice(1);
       handleImportLayout(layoutJson);
     }
-  }, []);
+  }, [handleImportLayout, props.locationFragment]);
 
   let menu = (
     <div
