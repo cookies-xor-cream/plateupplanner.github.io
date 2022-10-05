@@ -78,13 +78,17 @@ export class Layout {
   static decode(layoutJsonString: string) {
     const layoutJson = JSON.parse(layoutJsonString) as EncodedLayout;
     const layout = new Layout(layoutJson.height, layoutJson.width);
-    const allAppliances = SquareType.getAllAppliances();
+    const allAppliances = SquareType.getAllAppliances().map((appliance) => ({
+      imagePath: appliance.imagePath,
+      imageAlt: appliance.imageAlt,
+    }));
 
     layoutJson.layout.forEach((row, i) => {
       row.forEach((encodedElement, j) => {
         if (encodedElement.length === 2) {
-          const element = Object.assign({}, allAppliances[encodedElement[0]]);
-          Object.setPrototypeOf(element, SquareType.prototype);
+          const [order, rotation] = encodedElement;
+          const { imagePath, imageAlt } = allAppliances[order];
+          const element = new SquareType(imagePath, imageAlt, order, rotation);
           layout.setElement(i, j, element);
         } else {
           const wallElement = new WallType(encodedElement[0]);
