@@ -13,9 +13,11 @@ function App() {
   const [height, setHeight] = useState<number>(12);
   const [width, setWidth] = useState<number>(16);
   const [showWorkspace, setShowWorkspace] = useState(false);
+  const [importLayoutString, setImportLayoutString] = useState('')
 
   useEffect(() => {
     if (window.location.hash) {
+      setImportLayoutString(window.location.hash);
       setShowWorkspace(true);
     }
   }, []);
@@ -27,6 +29,7 @@ function App() {
         width > 0 &&
         height <= 12 &&
         width <= 16) {
+      setImportLayoutString('');
       setShowWorkspace(true);
     }
   }
@@ -75,7 +78,7 @@ function App() {
           setWidth={setWidth}
           setHeight={setHeight}
           handleResetParent={handleReset}
-          locationFragment={window.location.hash}
+          locationFragment={importLayoutString}
         />
       </div>
     )
