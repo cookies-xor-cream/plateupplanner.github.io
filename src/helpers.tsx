@@ -52,7 +52,7 @@ export class WallType {
 }
 
 export class SquareType {
-  static Empty = new SquareType("empty-tile.png", "Empty tile", 0);
+  static Empty = new SquareType("empty-tile.png", "Empty tile", -1);
 
   private static appliances = [
     // Cooking appliances

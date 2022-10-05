@@ -1,6 +1,6 @@
 import { SquareType, WallType } from "./helpers";
 
-type EncodedSquareType = [number, number]; // [order, rotation]
+type EncodedSquareType = [number, number]; // [order, rotation], -1 for an empty space
 type EncodedWallType = [number]; // [className]
 type EncodedLayout = {
   height: number;
@@ -80,9 +80,13 @@ export class Layout {
       row.forEach((encodedElement, j) => {
         if (encodedElement.length === 2) {
           const [order, rotation] = encodedElement;
-          const { imagePath, imageAlt } = allAppliances[order];
-          const element = new SquareType(imagePath, imageAlt, order, rotation);
-          layout.setElement(i, j, element);
+          if (order === -1) {
+            layout.setElement(i, j, SquareType.Empty);
+          } else {
+            const { imagePath, imageAlt } = allAppliances[order];
+            const element = new SquareType(imagePath, imageAlt, order, rotation);
+            layout.setElement(i, j, element);
+          }
         } else {
           layout.setElement(i, j, WallType.fromOrder(encodedElement[0]));
         }
