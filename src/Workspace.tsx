@@ -8,6 +8,8 @@ import { Menu } from "./Menu";
 import { SquareType, WallType, GridMode, styledButton } from "./helpers";
 import { Layout } from "./Layout";
 
+import LZUTF8 from 'lzutf8';
+
 import "./Workspace.css";
 export interface WorkspaceProps {
   height: number;
@@ -91,9 +93,13 @@ export default function Workspace(props: WorkspaceProps) {
 
   // downloads the Layout object properties as a JSON file
   const handleExportLayout = () => {
-    const layoutString = JSON.stringify(layout);
+    const layoutStringUncompressed = JSON.stringify(layout);
+    const layoutStringCompressed = LZUTF8.compress(layoutStringUncompressed, {
+      outputEncoding: 'Base64',
+    });
+    console.log(layoutStringCompressed);
     const baseUrl = `${window.location.origin}${window.location.pathname}`
-    const layoutURI = encodeURI(`${baseUrl}#${layoutString}`);
+    const layoutURI = `${baseUrl}#${layoutStringCompressed}`;
     navigator.clipboard.writeText(layoutURI).then();
   };
 
@@ -121,7 +127,11 @@ export default function Workspace(props: WorkspaceProps) {
 
   useEffect(() => {
     if (!!props.locationFragment) {
-      const layoutJson = decodeURI(props.locationFragment).slice(1);
+      const layoutJsonCompressed = props.locationFragment.slice(1);
+      const layoutJson = LZUTF8.decompress(layoutJsonCompressed, {
+        inputEncoding: 'Base64',
+        outputEncoding: 'String',
+      })
       handleImportLayout(layoutJson);
     }
   }, [handleImportLayout, props.locationFragment]);
